@@ -46,6 +46,19 @@ public class TaskService {
         List<TaskDto> taskDtos = new ArrayList<>();
         taskDtos.add(TaskDto.toTaskDto(task));
         return taskDtos;
+    }
 
+    //  менять статус своей задачи
+    public void editStatusTask(Long id, User user) {
+        var task = taskRepository.findTaskByIdAndUserEmail(id, user.getEmail()).orElseThrow(NullPointerException::new);
+        var type = taskRepository.findTaskByIdAndTaskStatus(task.getId(), task.getTaskStatus()).orElseThrow();
+        if (type.getTaskStatus().equals("new")) {
+            type.setTaskStatus("in_working");
+        } else if (type.getTaskStatus().equals("in_working")) {
+            type.setTaskStatus("completed");
+        } else {
+            log.error("Эта задача уже выполнена");
+        }
+        taskRepository.save(type);
     }
 }

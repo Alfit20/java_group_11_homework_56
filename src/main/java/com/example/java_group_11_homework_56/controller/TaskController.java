@@ -44,4 +44,15 @@ public class TaskController {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping("/edit/{id}")
+    public ResponseEntity<String> updateTaskStatus(@PathVariable Long id, Authentication authentication) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            taskService.editStatusTask(id, user);
+            return new ResponseEntity<>("Статус задачи изменен", HttpStatus.OK);
+        } catch (NullPointerException npe) {
+            return new ResponseEntity<>("Ошибка! Неверный индентификатор задачи", HttpStatus.BAD_REQUEST);
+        }
+    }
 }
